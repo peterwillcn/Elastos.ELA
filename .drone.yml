@@ -13,41 +13,47 @@ workspace:
   path: .
 
 steps:
-- name: unit
-  image: golang:1.12
-  environment:
-    GOPATH: /drone
-    GOROOT: /usr/local/go
-    GO111MODULE: on
-    TEST_BRANCH: master
-    GITLAB_URL: "https://gitlab+deploy-token-105635:PLzwmJuKRbbWHtSGDXxx@gitlab.com/elastos/Elastos.ELA.Test.Cases.git"
-  commands:
-  - curl -o /bin/addlicense http://172.16.0.120/addlicense
-  - curl -o /bin/revive http://172.16.120/revive
-  - curl -o /bin/checkcoverage http://172.16.120/checkcoverage
-  - chmod +x /bin/addlicense /bin/revive /bin/checkcoverage
-  - addlicense -check
-  - revive -config .revive.toml -formatter friendly -exclude vendor/... $(go list ./...)
-  - go test $(go list ./... | grep -v /vendor/) -v -short -coverprofile .coverage
-  - go tool cover -func .coverage
-  - checkcoverage
-  - make dev
-  - ./ela -v
-  - ./util.sh test
-  - git clone -b $TEST_BRANCH --depth 2 $GITLAB_URL
-  when:
-    event:
-    - push
-    - pull_request
-  #volumes:
-  #- name: gopath
-  #  path: /go
+  #- name: unit
+  #  image: golang:1.12
+  #  environment:
+  #    GOPATH: /drone
+  #    GOROOT: /usr/local/go
+  #    GO111MODULE: on
+  #    TEST_BRANCH: master
+  #    GITLAB_URL: "https://gitlab+deploy-token-105635:PLzwmJuKRbbWHtSGDXxx@gitlab.com/elastos/Elastos.ELA.Test.Cases.git"
+  #  commands:
+  #  - curl -o /bin/addlicense http://172.16.0.120/addlicense
+  #  - curl -o /bin/revive http://172.16.120/revive
+  #  - curl -o /bin/checkcoverage http://172.16.120/checkcoverage
+  #  - chmod +x /bin/addlicense /bin/revive /bin/checkcoverage
+  #  - addlicense -check
+  #  - revive -config .revive.toml -formatter friendly -exclude vendor/... $(go list ./...)
+  #  - go test $(go list ./... | grep -v /vendor/) -v -short -coverprofile .coverage
+  #  - go tool cover -func .coverage
+  #  - checkcoverage
+  #  - make dev
+  #  - ./ela -v
+  #  - ./util.sh test
+  #  - git clone -b $TEST_BRANCH --depth 2 $GITLAB_URL
+  #  when:
+  #    event:
+  #    - push
+  #    - pull_request
+  #  #volumes:
+  #  #- name: gopath
+  #  #  path: /go
 
 - name: k8s
   image: "ela-tester:k8s"
   environment:
     GOPATH: /drone
     RUN_TYPE: drone
-    HOST: localhost
+    CONF: file:///data/sample/master.json
+    TEST_BRANCH: master
+    GITLAB_URL: "https://gitlab+deploy-token-105635:PLzwmJuKRbbWHtSGDXxx@gitlab.com/elastos/Elastos.ELA.Test.Cases.git"
   commands:
-  - sleep 1800
+    - cd /tmp
+    - git clone -b $TEST_BRANCH --depth 2 $GITLAB_URL cases
+    - mv /tmp/cases/cases/CR/* /cases
+    - sleep 1800
+    - /ela-master --conf=$CONF
