@@ -1,6 +1,3 @@
-workspace:
-  path: /github.com/elastos/Elastos.ELA
-
 kind: pipeline
 name: elastos
 
@@ -10,6 +7,10 @@ clone:
 platform:
   os: linux
   arch: amd64
+
+workspace:
+  base: /github.com/elastos/Elastos.ELA
+  path: .
 
 steps:
 - name: unit
@@ -33,7 +34,7 @@ steps:
   - make dev
   - ./ela -v
   - ./util.sh test
-  - git clone -b $TEST_BRANCH --depth 10 $GITLAB_URL
+  - git clone -b $TEST_BRANCH --depth 2 $GITLAB_URL
   when:
     event:
     - push
@@ -42,11 +43,11 @@ steps:
   #- name: gopath
   #  path: /go
 
-- name: superTester
-  image: "peterwillcn/ela-tester:master"
+- name: k8s
+  image: "ela-tester:k8s"
   environment:
     GOPATH: /drone
-    CONF: file://drone/src/github.com/elastos/Elastos.ELA/Elastos.ELA.Test.Cases/config.json
-    CASE: file://drone/src/github.com/elastos/Elastos.ELA/Elastos.ELA.Test.Cases/test-cr-case1/registercr.json
+    RUN_TYPE: drone
+    HOST: localhost
   commands:
-  - /ela-manager --conf=$CONF --case=$CASE
+  - sleep 1800
