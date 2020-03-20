@@ -21,6 +21,7 @@ import (
 	"github.com/elastos/Elastos.ELA/common/log"
 	elaErr "github.com/elastos/Elastos.ELA/errors"
 	. "github.com/elastos/Elastos.ELA/servers"
+	"github.com/rs/cors"
 )
 
 //an instance of the multiplexer
@@ -97,8 +98,9 @@ func StartRPCServer() {
 	mainMux["getarbitersinfo"] = GetArbitersInfo
 
 	rpcServeMux := http.NewServeMux()
+	c := cors.New(cors.Options{})
 	server := http.Server{
-		Handler:      rpcServeMux,
+		Handler:      c.Handler(rpcServeMux),
 		ReadTimeout:  IOTimeout,
 		WriteTimeout: IOTimeout,
 	}
