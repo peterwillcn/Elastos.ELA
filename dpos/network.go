@@ -1,7 +1,7 @@
 // Copyright (c) 2017-2020 The Elastos Foundation
 // Use of this source code is governed by an MIT
 // license that can be found in the LICENSE file.
-// 
+//
 
 package dpos
 
@@ -26,7 +26,7 @@ import (
 	elamsg "github.com/elastos/Elastos.ELA/p2p/msg"
 )
 
-const dataPathDPoS = "elastos/data/dpos"
+const dataPathDPoS = "data/dpos"
 
 type NetworkConfig struct {
 	ChainParams *config.Params
