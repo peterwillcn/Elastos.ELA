@@ -183,6 +183,14 @@ func (p *ProposalManager) updateProposals(height uint32,
 				if p.transferCRAgreedState(v, height, circulation) == VoterCanceled {
 					unusedAmount += getProposalTotalBudgetAmount(v.Proposal)
 				}
+				if v.Proposal.ProposalType == payload.ChangeProposalOwner {
+					proposal := p.getProposal(v.Proposal.PreviousHash)
+					p.history.Append(height, func() {
+						proposal.ProposalOwner = v.Proposal.NewOwnerPublicKey
+					}, func() {
+						proposal.ProposalOwner = v.Proposal.OwnerPublicKey
+					})
+				}
 			}
 		}
 	}

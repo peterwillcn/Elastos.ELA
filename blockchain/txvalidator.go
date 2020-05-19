@@ -2155,6 +2155,45 @@ func (b *BlockChain) checkCRCProposalTransaction(txn *Transaction,
 		}
 	}
 
+	if proposal.ProposalType == payload.ChangeProposalOwner {
+		if !b.crCommittee.IsInElectionPeriod() || b.crCommittee.IsInVotingPeriod(blockHeight) {
+			return errors.New("cr proposal tx must be at election Period and not during voting period")
+		}
+
+		proposalState := b.crCommittee.GetProposal(proposal.PreviousHash)
+		if proposalState.Status != crstate.VoterAgreed {
+			return errors.New("proposal status is not VoterAgreed")
+		}
+
+		if b.crCommittee.ExistProposal(proposal.Hash()) {
+			return errors.New("duplicated draft proposal hash")
+		}
+
+		publicKey, err := crypto.DecodePoint(proposal.OwnerPublicKey)
+		if err != nil {
+			return errors.New("invalid owner")
+		}
+
+		newPublicKey, err := crypto.DecodePoint(proposal.NewOwnerPublicKey)
+		if err != nil {
+			return errors.New("invalid owner")
+		}
+
+		if newPublicKey == publicKey {
+			return errors.New("cr new did must be different from the previous one")
+		}
+
+		newCode, err := contract.CreateStandardRedeemScript(newPublicKey)
+		did, _ := getDIDByCode(newCode)
+		crMember := b.crCommittee.GetMember(*did)
+		//cid, _ := contract.CreateCRIDContractByCode(newCode)
+		//crMember := b.crCommittee.GetMember(*cid)
+		if crMember == nil {
+			return errors.New("proposal sponsors must be members")
+		}
+
+	}
+
 	// Check budgets of proposal
 	if len(proposal.Budgets) < 1 {
 		return errors.New("a proposal cannot be without a Budget")
@@ -2274,6 +2313,17 @@ func (b *BlockChain) checkCRCProposalTransaction(txn *Transaction,
 	}
 
 	return nil
+}
+
+func getDIDByCode(code []byte) (*common.Uint168, error) {
+	didCode := make([]byte, len(code))
+	copy(didCode, code)
+	didCode = append(didCode[:len(code)-1], common.DID)
+	ct1, err := contract.CreateCRIDContractByCode(didCode)
+	if err != nil {
+		return nil, err
+	}
+	return ct1.ToProgramHash(), err
 }
 
 func getParameterBySignature(signature []byte) []byte {
