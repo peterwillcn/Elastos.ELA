@@ -1452,7 +1452,7 @@ func GetExistWithdrawTransactions(param Params) map[string]interface{} {
 }
 
 //single producer info
-type RpcProducerInfo struct {
+type RPCProducerInfo struct {
 	OwnerPublicKey string `json:"ownerpublickey"`
 	NodePublicKey  string `json:"nodepublickey"`
 	Nickname       string `json:"nickname"`
@@ -1469,14 +1469,14 @@ type RpcProducerInfo struct {
 }
 
 //a group producer info  include TotalVotes and producer count
-type RpcProducersInfo struct {
-	ProducerInfoSlice []RpcProducerInfo `json:"producers"`
+type RPCProducersInfo struct {
+	ProducerInfoSlice []RPCProducerInfo `json:"producers"`
 	TotalVotes        string            `json:"totalvotes"`
 	TotalCounts       uint64            `json:"totalcounts"`
 }
 
 //single cr candidate info
-type RpcCrCandidateInfo struct {
+type RPCCRCandidateInfo struct {
 	Code           string `json:"code"`
 	CID            string `json:"cid"`
 	DID            string `json:"did"`
@@ -1492,18 +1492,27 @@ type RpcCrCandidateInfo struct {
 }
 
 //a group cr candidate info include TotalVotes and candidate count
-type RpcCrCandidatesInfo struct {
-	CRCandidateInfoSlice []RpcCrCandidateInfo `json:"crcandidatesinfo"`
+type RPCCRCandidatesInfo struct {
+	CRCandidateInfoSlice []RPCCRCandidateInfo `json:"crcandidatesinfo"`
 	TotalVotes           string               `json:"totalvotes"`
 	TotalCounts          uint64               `json:"totalcounts"`
 }
 
-type RpcSecretaryGeneral struct {
+type RPCSecretaryGeneralInfo struct {
 	SecretaryGeneral string `json:"secretarygeneral"`
 }
 
+type RPCCRRelatedStage struct {
+	OnDuty            bool   `json:"onduty"`
+	OnDutyStartHeight uint32 `json:"ondutystartheight"`
+	OnDutyEndHeight   uint32 `json:"ondutyendheight"`
+	InVoting          bool   `json:"invoting"`
+	VotingStartHeight uint32 `json:"votingstartheight"`
+	VotingEndHeight   uint32 `json:"votingendheight"`
+}
+
 //single cr member info
-type RpcCrMemberInfo struct {
+type RPCCRMemberInfo struct {
 	Code             string `json:"code"`
 	CID              string `json:"cid"`
 	DID              string `json:"did"`
@@ -1519,12 +1528,12 @@ type RpcCrMemberInfo struct {
 }
 
 //a group cr member info  include cr member count
-type RpcCrMembersInfo struct {
-	CRMemberInfoSlice []RpcCrMemberInfo `json:"crmembersinfo"`
+type RPCCRMembersInfo struct {
+	CRMemberInfoSlice []RPCCRMemberInfo `json:"crmembersinfo"`
 	TotalCounts       uint64            `json:"totalcounts"`
 }
 
-type RpcProposalBaseState struct {
+type RPCProposalBaseState struct {
 	Status             string            `json:"status"`
 	ProposalHash       string            `json:"proposalhash"`
 	TxHash             string            `json:"txhash"`
@@ -1537,12 +1546,12 @@ type RpcProposalBaseState struct {
 	Index              uint64            `json:"index"`
 }
 
-type RpcCRProposalBaseStateInfo struct {
-	ProposalBaseStates []RpcProposalBaseState `json:"proposalbasestates"`
+type RPCCRProposalBaseStateInfo struct {
+	ProposalBaseStates []RPCProposalBaseState `json:"proposalbasestates"`
 	TotalCounts        uint64                 `json:"totalcounts"`
 }
 
-type RpcCRCProposal struct {
+type RPCCRCProposal struct {
 	ProposalType       string       `json:"proposaltype"`
 	OwnerPublicKey     string       `json:"ownerpublickey"`
 	CRCouncilMemberDID string       `json:"crcouncilmemberdid"`
@@ -1551,9 +1560,9 @@ type RpcCRCProposal struct {
 	Budgets            []BudgetInfo `json:"budgets"`
 }
 
-type RpcProposalState struct {
+type RPCProposalState struct {
 	Status             string            `json:"status"`
-	Proposal           RpcCRCProposal    `json:"proposal"`
+	Proposal           RPCCRCProposal    `json:"proposal"`
 	ProposalHash       string            `json:"proposalhash"`
 	TxHash             string            `json:"txhash"`
 	CRVotes            map[string]string `json:"crvotes"`
@@ -1565,8 +1574,8 @@ type RpcProposalState struct {
 	AvailableAmount    string            `json:"availableamount"`
 }
 
-type RpcCRProposalStateInfo struct {
-	ProposalState RpcProposalState `json:"proposalstate"`
+type RPCCRProposalStateInfo struct {
+	ProposalState RPCProposalState `json:"proposalstate"`
 }
 
 func ListProducers(param Params) map[string]interface{} {
@@ -1607,11 +1616,11 @@ func ListProducers(param Params) map[string]interface{} {
 		return producers[i].Votes() > producers[j].Votes()
 	})
 
-	var producerInfoSlice []RpcProducerInfo
+	var producerInfoSlice []RPCProducerInfo
 	var totalVotes common.Fixed64
 	for i, p := range producers {
 		totalVotes += p.Votes()
-		producerInfo := RpcProducerInfo{
+		producerInfo := RPCProducerInfo{
 			OwnerPublicKey: hex.EncodeToString(p.Info().OwnerPublicKey),
 			NodePublicKey:  hex.EncodeToString(p.Info().NodePublicKey),
 			Nickname:       p.Info().NickName,
@@ -1633,7 +1642,7 @@ func ListProducers(param Params) map[string]interface{} {
 	if limit < 0 {
 		limit = count
 	}
-	var rsProducerInfoSlice []RpcProducerInfo
+	var rsProducerInfoSlice []RPCProducerInfo
 	if start < count {
 		end := start
 		if start+limit <= count {
@@ -1644,7 +1653,7 @@ func ListProducers(param Params) map[string]interface{} {
 		rsProducerInfoSlice = append(rsProducerInfoSlice, producerInfoSlice[start:end]...)
 	}
 
-	result := &RpcProducersInfo{
+	result := &RPCProducersInfo{
 		ProducerInfoSlice: rsProducerInfoSlice,
 		TotalVotes:        totalVotes.String(),
 		TotalCounts:       uint64(count),
@@ -1654,8 +1663,36 @@ func ListProducers(param Params) map[string]interface{} {
 }
 
 func GetSecretaryGeneral(param Params) map[string]interface{} {
-	result := &RpcSecretaryGeneral{
+	result := &RPCSecretaryGeneralInfo{
 		SecretaryGeneral: ChainParams.SecretaryGeneral,
+	}
+	return ResponsePack(Success, result)
+}
+
+func GetCRRelatedStage(param Params) map[string]interface{} {
+	cm := Chain.GetCRCommittee()
+	isOnDuty := cm.IsInElectionPeriod()
+	isInVoting := cm.IsInVotingPeriod(Chain.GetHeight())
+	var ondutyStartHeight uint32
+	var ondutyEndHeight uint32
+	if isOnDuty {
+		ondutyStartHeight = cm.GetCROnDutyStartHeight()
+		ondutyEndHeight = ondutyStartHeight + cm.GetCROnDutyPeriod()
+	}
+	var votingStartHeight uint32
+	var votingEndHeight uint32
+	if isInVoting {
+		votingStartHeight = cm.GetCRVotingStartHeight()
+		votingEndHeight = votingStartHeight + cm.GetCRVotingPeriod()
+	}
+
+	result := &RPCCRRelatedStage{
+		OnDuty:            isOnDuty,
+		OnDutyStartHeight: ondutyStartHeight,
+		OnDutyEndHeight:   ondutyEndHeight,
+		InVoting:          isInVoting,
+		VotingStartHeight: votingStartHeight,
+		VotingEndHeight:   votingEndHeight,
 	}
 	return ResponsePack(Success, result)
 }
@@ -1697,7 +1734,7 @@ func ListCRCandidates(param Params) map[string]interface{} {
 		return candidates[i].Votes() > candidates[j].Votes()
 	})
 
-	var candidateInfoSlice []RpcCrCandidateInfo
+	var candidateInfoSlice []RPCCRCandidateInfo
 	var totalVotes common.Fixed64
 	for i, c := range candidates {
 		totalVotes += c.Votes()
@@ -1706,7 +1743,7 @@ func ListCRCandidates(param Params) map[string]interface{} {
 		if !c.Info().DID.IsEqual(emptyHash) {
 			didAddress, _ = c.Info().DID.ToAddress()
 		}
-		candidateInfo := RpcCrCandidateInfo{
+		candidateInfo := RPCCRCandidateInfo{
 			Code:           hex.EncodeToString(c.Info().Code),
 			CID:            cidAddress,
 			DID:            didAddress,
@@ -1726,7 +1763,7 @@ func ListCRCandidates(param Params) map[string]interface{} {
 	if limit < 0 {
 		limit = count
 	}
-	var rSCandidateInfoSlice []RpcCrCandidateInfo
+	var rSCandidateInfoSlice []RPCCRCandidateInfo
 	if start < count {
 		end := start
 		if start+limit <= count {
@@ -1737,7 +1774,7 @@ func ListCRCandidates(param Params) map[string]interface{} {
 		rSCandidateInfoSlice = append(rSCandidateInfoSlice, candidateInfoSlice[start:end]...)
 	}
 
-	result := &RpcCrCandidatesInfo{
+	result := &RPCCRCandidatesInfo{
 		CRCandidateInfoSlice: rSCandidateInfoSlice,
 		TotalVotes:           totalVotes.String(),
 		TotalCounts:          uint64(count),
@@ -1758,7 +1795,7 @@ func ListCurrentCRs(param Params) map[string]interface{} {
 		})
 	}
 
-	var rsCRMemberInfoSlice []RpcCrMemberInfo
+	var rsCRMemberInfoSlice []RPCCRMemberInfo
 	for i, cr := range crMembers {
 		cidAddress, _ := cr.Info.CID.ToAddress()
 		var didAddress string
@@ -1766,7 +1803,7 @@ func ListCurrentCRs(param Params) map[string]interface{} {
 			didAddress, _ = cr.Info.DID.ToAddress()
 		}
 		depositAddr, _ := cr.DepositHash.ToAddress()
-		memberInfo := RpcCrMemberInfo{
+		memberInfo := RPCCRMemberInfo{
 			Code:             hex.EncodeToString(cr.Info.Code),
 			CID:              cidAddress,
 			DID:              didAddress,
@@ -1785,7 +1822,7 @@ func ListCurrentCRs(param Params) map[string]interface{} {
 
 	count := int64(len(crMembers))
 
-	result := &RpcCrMembersInfo{
+	result := &RPCCRMembersInfo{
 		CRMemberInfoSlice: rsCRMemberInfoSlice,
 		TotalCounts:       uint64(count),
 	}
@@ -1829,7 +1866,7 @@ func ListCRProposalBaseState(param Params) map[string]interface{} {
 	}
 
 	var crVotes map[string]string
-	var RpcProposalBaseStates []RpcProposalBaseState
+	var rpcProposalBaseStates []RPCProposalBaseState
 
 	var index uint64
 	for _, proposal := range proposalMap {
@@ -1838,7 +1875,7 @@ func ListCRProposalBaseState(param Params) map[string]interface{} {
 			did, _ := k.ToAddress()
 			crVotes[did] = v.Name()
 		}
-		RpcProposalBaseState := RpcProposalBaseState{
+		rpcProposalBaseState := RPCProposalBaseState{
 			Status:             proposal.Status.String(),
 			ProposalHash:       ToReversedString(proposal.Proposal.Hash()),
 			TxHash:             ToReversedString(proposal.TxHash),
@@ -1850,23 +1887,23 @@ func ListCRProposalBaseState(param Params) map[string]interface{} {
 			ProposalOwner:      hex.EncodeToString(proposal.ProposalOwner),
 			Index:              index,
 		}
-		RpcProposalBaseStates = append(RpcProposalBaseStates, RpcProposalBaseState)
+		rpcProposalBaseStates = append(rpcProposalBaseStates, rpcProposalBaseState)
 		index++
 	}
-	sort.Slice(RpcProposalBaseStates, func(i, j int) bool {
-		return RpcProposalBaseStates[i].
-			ProposalHash < RpcProposalBaseStates[j].ProposalHash
+	sort.Slice(rpcProposalBaseStates, func(i, j int) bool {
+		return rpcProposalBaseStates[i].
+			ProposalHash < rpcProposalBaseStates[j].ProposalHash
 	})
 
-	for k := range RpcProposalBaseStates {
-		RpcProposalBaseStates[k].Index = uint64(k)
+	for k := range rpcProposalBaseStates {
+		rpcProposalBaseStates[k].Index = uint64(k)
 	}
 
-	count := int64(len(RpcProposalBaseStates))
+	count := int64(len(rpcProposalBaseStates))
 	if limit < 0 {
 		limit = count
 	}
-	var rSRpcProposalBaseStates []RpcProposalBaseState
+	var rRPCProposalBaseStates []RPCProposalBaseState
 	if start < count {
 		end := start
 		if start+limit <= count {
@@ -1874,11 +1911,11 @@ func ListCRProposalBaseState(param Params) map[string]interface{} {
 		} else {
 			end = count
 		}
-		rSRpcProposalBaseStates = append(rSRpcProposalBaseStates, RpcProposalBaseStates[start:end]...)
+		rRPCProposalBaseStates = append(rRPCProposalBaseStates, rpcProposalBaseStates[start:end]...)
 	}
 
-	result := &RpcCRProposalBaseStateInfo{
-		ProposalBaseStates: rSRpcProposalBaseStates,
+	result := &RPCCRProposalBaseStateInfo{
+		ProposalBaseStates: rRPCProposalBaseStates,
 		TotalCounts:        uint64(count),
 	}
 
@@ -1922,7 +1959,7 @@ func GetCRProposalState(param Params) map[string]interface{} {
 		}
 	}
 
-	var rpcProposal RpcCRCProposal
+	var rpcProposal RPCCRCProposal
 	proposalHash := proposalState.Proposal.Hash()
 
 	did, _ := proposalState.Proposal.CRCouncilMemberDID.ToAddress()
@@ -1951,7 +1988,7 @@ func GetCRProposalState(param Params) map[string]interface{} {
 		did, _ := k.ToAddress()
 		crVotes[did] = v.Name()
 	}
-	RpcProposalState := RpcProposalState{
+	rpcProposalState := RPCProposalState{
 		Status:             proposalState.Status.String(),
 		Proposal:           rpcProposal,
 		ProposalHash:       ToReversedString(proposalHash),
@@ -1964,7 +2001,7 @@ func GetCRProposalState(param Params) map[string]interface{} {
 		ProposalOwner:      hex.EncodeToString(proposalState.ProposalOwner),
 		AvailableAmount:    crCommittee.AvailableWithdrawalAmount(proposalHash).String(),
 	}
-	result := &RpcCRProposalStateInfo{ProposalState: RpcProposalState}
+	result := &RPCCRProposalStateInfo{ProposalState: rpcProposalState}
 	return ResponsePack(Success, result)
 }
 
