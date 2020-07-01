@@ -651,7 +651,7 @@ func (b *BlockChain) checkTransactionOutput(txn *Transaction,
 	if len(txn.Outputs) > math.MaxUint16 {
 		return errors.New("output count should not be greater than 65535(MaxUint16)")
 	}
-
+	//log.Infof("### TX Output: %s", txn.String())
 	if txn.IsCoinBaseTx() {
 		if len(txn.Outputs) < 2 {
 			return errors.New("coinbase output is not enough, at least 2")
@@ -659,12 +659,10 @@ func (b *BlockChain) checkTransactionOutput(txn *Transaction,
 
 		if blockHeight >= b.chainParams.CRCommitteeStartHeight {
 			if !txn.Outputs[0].ProgramHash.IsEqual(b.chainParams.CRAssetsAddress) {
-				return errors.New("first output address should be CRC " +
-					"foundation address")
+				return errors.New("first output address should be CRC foundation address")
 			}
 		} else if !txn.Outputs[0].ProgramHash.IsEqual(FoundationAddress) {
-			return errors.New("first output address should be foundation " +
-				"address")
+			return errors.New("first output address should be foundation address")
 		}
 
 		foundationReward := txn.Outputs[0].Value
