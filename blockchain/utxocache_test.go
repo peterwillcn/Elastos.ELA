@@ -71,6 +71,11 @@ func init() {
 	testing.Init()
 }
 
+func TestNewUTXOCache(t *testing.T) {
+	hash, _:= common.FromReversedString("b7a9956ab6a5d2aa6e3929d94e41f0bd408e9ef83d7f6839c5a5f8f0adbf1a9d")
+	fmt.Println(common.BytesToHexString(hash))
+}
+
 func (s *UtxoCacheDB) GetTransaction(txID common.Uint256) (
 	*types.Transaction, uint32, error) {
 	txn, exist := s.transactions[txID]

@@ -32,7 +32,7 @@ import (
 const (
 	maxNonce       = ^uint32(0) // 2^32 - 1
 	updateInterval = 30 * time.Second
-	maxTxPerBlock  = 100
+	maxTxPerBlock  = 10000
 )
 
 type Config struct {
