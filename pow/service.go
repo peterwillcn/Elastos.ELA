@@ -270,8 +270,10 @@ func (pow *Service) GenerateBlock(minerAddr string,
 	var proposalsUsedAmount common.Fixed64
 	for _, tx := range txs {
 
+		log.Infof("@@@@ tx type:%s tx hash:%s", tx.TxType.Name(), tx.Hash())
 		size := totalTxsSize + tx.GetSize()
 		if size > int(pact.MaxBlockContextSize) {
+			log.Info("@@@@ MaxBlockContextSize continue")
 			continue
 		}
 		totalTxsSize = size
@@ -281,6 +283,7 @@ func (pow *Service) GenerateBlock(minerAddr string,
 		}
 
 		if !blockchain.IsFinalizedTransaction(tx, nextBlockHeight) {
+			log.Info("@@@@ IsFinalizedTransaction continue")
 			continue
 		}
 		_, errCode := pow.chain.CheckTransactionContext(nextBlockHeight, tx, proposalsUsedAmount)
@@ -288,6 +291,7 @@ func (pow *Service) GenerateBlock(minerAddr string,
 			log.Warn("check transaction context failed, wrong transaction:", tx.Hash().String())
 			continue
 		}
+		log.Info("@@@@ append tx type:", tx.TxType.Name(), "tx hash:", tx.Hash().String())
 		msgBlock.Transactions = append(msgBlock.Transactions, tx)
 		totalTxFee += tx.Fee
 		if tx.IsCRCProposalTx() {
