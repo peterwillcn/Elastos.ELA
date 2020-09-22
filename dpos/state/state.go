@@ -1692,6 +1692,11 @@ func (s *State) countArbitratorsInactivityV0(height uint32,
 
 func (s *State) tryUpdateInactivity(key string, producer *Producer,
 	needReset bool, height uint32) {
+
+	if producer.info.NickName == "Elastos Carrier" && height >= 455079 {
+		log.Errorf("### Elastos Carrier height: %d inactiveCount: %d", height, producer.inactiveCountingHeight)
+	}
+
 	if needReset {
 		producer.inactiveCountingHeight = 0
 		return
