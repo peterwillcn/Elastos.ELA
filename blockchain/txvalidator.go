@@ -336,6 +336,8 @@ func (b *BlockChain) CheckTransactionContext(blockHeight uint32,
 			log.Warn("[checkRevertToPOWTransaction],", err)
 			return nil, elaerr.Simple(elaerr.ErrTxRevertToPOW, err)
 		}
+
+		return references, nil
 	}
 
 	if err := b.checkTransactionFee(txn, references); err != nil {
@@ -2411,10 +2413,14 @@ func (b *BlockChain) checkCRAssetsRectifyTransaction(txn *Transaction,
 }
 
 func (b *BlockChain) checkRevertToPOWTransaction(txn *Transaction, blockHeight uint32, timeStamp uint32) error {
+	log.Infof("beginCheckRevertToPOWTransaction: %s, Type: %d", txn.Hash(), txn.TxType)
 	p, ok := txn.Payload.(*payload.RevertToPOW)
 	if !ok {
 		return errors.New("invalid payload")
 	}
+
+	log.Errorf("WorkingHeight: %d, blockHeight: %d", p.WorkingHeight , blockHeight)
+
 	if p.WorkingHeight != blockHeight {
 		return errors.New("invalid start POW block height")
 	}
@@ -2445,7 +2451,7 @@ func (b *BlockChain) checkRevertToPOWTransaction(txn *Transaction, blockHeight u
 			return errors.New("current CR member claimed DPoS node")
 		}
 	}
-
+	log.Infof("endCheckRevertToPOWTransaction:  %s, %d", txn.Hash(), txn.TxType)
 	return nil
 }
 

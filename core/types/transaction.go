@@ -109,8 +109,6 @@ func (self TxType) Name() string {
 		return "IllegalSidechainEvidence"
 	case InactiveArbitrators:
 		return "InactiveArbitrators"
-	case RevertToDPOS:
-		return "RevertToDPOS"
 	case UpdateVersion:
 		return "UpdateVersion"
 	case RegisterCR:
@@ -143,6 +141,8 @@ func (self TxType) Name() string {
 		return "CustomIDResult"
 	case RevertToPOW:
 		return "RevertToPOW"
+	case RevertToDPOS:
+		return "RevertToDPOS"
 	default:
 		return "Unknown"
 	}
@@ -644,6 +644,8 @@ func GetPayload(txType TxType) (Payload, error) {
 		p = new(payload.CRCouncilMemberClaimNode)
 	case NextTurnDPOSInfo:
 		p = new(payload.NextTurnDPOSInfo)
+	case RevertToPOW:
+		p = new(payload.RevertToPOW)
 	default:
 		return nil, errors.New("[Transaction], invalid transaction type.")
 	}
