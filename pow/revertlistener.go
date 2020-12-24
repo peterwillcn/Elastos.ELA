@@ -11,7 +11,6 @@ import (
 	"github.com/elastos/Elastos.ELA/core/contract/program"
 	"github.com/elastos/Elastos.ELA/core/types"
 	"github.com/elastos/Elastos.ELA/core/types/payload"
-	"github.com/elastos/Elastos.ELA/dpos/log"
 )
 
 const CheckRevertToPOWInterval = time.Minute

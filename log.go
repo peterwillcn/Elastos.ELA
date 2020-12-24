@@ -21,6 +21,7 @@ import (
 	"github.com/elastos/Elastos.ELA/elanet/routes"
 	"github.com/elastos/Elastos.ELA/p2p/addrmgr"
 	"github.com/elastos/Elastos.ELA/p2p/connmgr"
+	"github.com/elastos/Elastos.ELA/pow"
 	"github.com/elastos/Elastos.ELA/utils/elalog"
 
 	"github.com/urfave/cli"
@@ -186,6 +187,7 @@ func setupLog(c *cli.Context, s *settings.Settings) {
 	elanlog := wrap(logger, elalog.Level(s.Params().PrintLevel))
 	statlog := wrap(logger, elalog.Level(s.Params().PrintLevel))
 	crstatlog := wrap(logger, elalog.Level(s.Params().PrintLevel))
+	powlog := wrap(logger, elalog.Level(s.Params().PrintLevel))
 
 	addrmgr.UseLogger(admrlog)
 	connmgr.UseLogger(cmgrlog)
@@ -195,4 +197,5 @@ func setupLog(c *cli.Context, s *settings.Settings) {
 	elanet.UseLogger(elanlog)
 	state.UseLogger(statlog)
 	crstate.UseLogger(crstatlog)
+	pow.UseLogger(powlog)
 }
