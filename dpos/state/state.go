@@ -1545,6 +1545,12 @@ func (s *State) ProcessSpecialTxPayload(p types.Payload, height uint32) {
 // setInactiveProducer set active producer to inactive state
 func (s *State) setInactiveProducer(producer *Producer, key string,
 	height uint32, emergency bool) {
+
+	if producer.info.NickName == "Elastos Carrier" {
+		log.Errorf("=== setInactiveProducer height: %d inactiveCountingHeight: %d producerInfo: %s",
+			height, producer.inactiveCountingHeight, producer.Info())
+	}
+
 	producer.inactiveSince = height
 	producer.activateRequestHeight = math.MaxUint32
 	producer.state = Inactive
@@ -1693,8 +1699,9 @@ func (s *State) countArbitratorsInactivityV0(height uint32,
 func (s *State) tryUpdateInactivity(key string, producer *Producer,
 	needReset bool, height uint32) {
 
-	if producer.info.NickName == "Elastos Carrier" && height >= 455079 {
-		log.Errorf("### Elastos Carrier height: %d inactiveCount: %d", height, producer.inactiveCountingHeight)
+	if producer.info.NickName == "Elastos Carrier" {
+		log.Errorf("### Elastos Carrier height: %d inactiveCountingHeight: %d state %s, producerInfo: %v ",
+			height, producer.inactiveCountingHeight, producer.state, producer.Info())
 	}
 
 	if needReset {
@@ -1707,6 +1714,9 @@ func (s *State) tryUpdateInactivity(key string, producer *Producer,
 	}
 
 	if height-producer.inactiveCountingHeight >= s.chainParams.MaxInactiveRounds {
+		if producer.info.NickName == "Elastos Carrier" {
+			log.Errorf("@@@ Inactive height: %d inactiveCountingHeight: %d producerInfo: %s", height, producer.inactiveCountingHeight, producer.Info())
+		}
 		s.setInactiveProducer(producer, key, height, false)
 		producer.inactiveCountingHeight = 0
 	}
