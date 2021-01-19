@@ -1560,6 +1560,9 @@ func (s *State) processEmergencyInactiveArbitrators(
 
 	addEmergencyInactiveArbitrator := func(key string, producer *Producer) {
 		s.history.Append(height, func() {
+			if producer.info.NickName == "ElastosDMA" {
+				log.Info("#### processEmergencyInactiveArbitrators inactive at height:", height, "producer.state:", producer.state.String())
+			}
 			s.setInactiveProducer(producer, key, height, true)
 			s.EmergencyInactiveArbiters[key] = struct{}{}
 		}, func() {
@@ -1864,6 +1867,7 @@ func (s *State) countArbitratorsInactivityV1(height uint32,
 // inactive if more than "MaxInactiveRounds"
 func (s *State) countArbitratorsInactivityV0(height uint32,
 	confirm *payload.Confirm) {
+
 	// check inactive arbitrators after producers has participated in
 	if height < s.chainParams.PublicDPOSHeight {
 		return
@@ -1952,10 +1956,14 @@ func (s *State) tryUpdateInactivityV1(key string, producer *Producer,
 
 func (s *State) tryUpdateInactivityV0(key string, producer *Producer,
 	needReset bool, height uint32) {
+
 	if needReset {
 		producer.inactiveCount = 0
 		producer.inactiveCountReseted = true
 		producer.lastUpdateInactiveHeight = height
+		if producer.info.NickName == "ElastosDMA" {
+			log.Info("#### tryUpdateInactivityV0 reset, at height:", height)
+		}
 		return
 	}
 
@@ -1970,6 +1978,12 @@ func (s *State) tryUpdateInactivityV0(key string, producer *Producer,
 	}
 
 	if inactiveCount >= s.chainParams.MaxInactiveRounds {
+		if producer.info.NickName == "ElastosDMA" {
+			log.Info("#### tryUpdateInactivityV0 inactive at height:", height,
+				"inactiveCount:", inactiveCount,
+				"lastUpdateInactiveHeight:", producer.lastUpdateInactiveHeight,
+				"inactiveCountReseted:", producer.inactiveCountReseted)
+		}
 		s.setInactiveProducer(producer, key, height, false)
 		producer.inactiveCount = 0
 		producer.lastUpdateInactiveHeight = height
