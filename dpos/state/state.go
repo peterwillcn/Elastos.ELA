@@ -1969,6 +1969,7 @@ func (s *State) tryUpdateInactivityV0(key string, producer *Producer,
 
 	if height != producer.lastUpdateInactiveHeight+1 {
 		producer.inactiveCountReseted = false
+		producer.inactiveCount = 0
 	}
 
 	producer.inactiveCount++
@@ -1985,7 +1986,6 @@ func (s *State) tryUpdateInactivityV0(key string, producer *Producer,
 				"inactiveCountReseted:", producer.inactiveCountReseted)
 		}
 		s.setInactiveProducer(producer, key, height, false)
-		producer.inactiveCount = 0
 		producer.lastUpdateInactiveHeight = height
 	}
 }
