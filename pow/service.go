@@ -300,6 +300,9 @@ func (pow *Service) GenerateBlock(minerAddr string,
 		txCount++
 	}
 	totalReward := totalTxFee + pow.chainParams.GetBlockReward(nextBlockHeight)
+
+	log.Error("###### totalReward:", totalReward)
+
 	pow.AssignCoinbaseTxRewards(msgBlock, totalReward)
 
 	txHash := make([]common.Uint256, 0, len(msgBlock.Transactions))

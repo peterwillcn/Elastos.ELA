@@ -434,6 +434,9 @@ func (b *BlockChain) checkCoinbaseTransactionContext(blockHeight uint32, coinbas
 	// main version >= H2
 	if blockHeight >= b.chainParams.PublicDPOSHeight {
 		totalReward := totalTxFee + b.chainParams.GetBlockReward(blockHeight)
+
+		log.Error("### totalReward:", totalReward)
+
 		rewardDPOSArbiter := Fixed64(math.Ceil(float64(totalReward) * 0.35))
 		if totalReward-rewardDPOSArbiter+DefaultLedger.Arbitrators.
 			GetFinalRoundChange() != coinbase.Outputs[0].Value+
