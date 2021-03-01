@@ -441,6 +441,14 @@ func (b *BlockChain) checkCoinbaseTransactionContext(blockHeight uint32, coinbas
 		if totalReward-rewardDPOSArbiter+DefaultLedger.Arbitrators.
 			GetFinalRoundChange() != coinbase.Outputs[0].Value+
 			coinbase.Outputs[1].Value {
+
+			log.Errorf("### rewardDPOSArbiter", rewardDPOSArbiter)
+			log.Errorf("### totalReward", totalReward)
+			log.Errorf("### GetFinalRoundChange", DefaultLedger.Arbitrators.
+				GetFinalRoundChange())
+			log.Errorf("### coinbase 0 ", coinbase.Outputs[0].Value)
+			log.Errorf("### coinbase 1 ", coinbase.Outputs[1].Value)
+
 			return errors.New("reward amount in coinbase not correct")
 		}
 

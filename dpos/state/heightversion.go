@@ -50,6 +50,7 @@ func readi64(src []byte) (int64, []byte, bool) {
 // H2 - H3
 func (a *arbitrators) getNormalArbitratorsDescV2(arbitratorsCount int,
 	producers []*Producer, start int) ([]ArbiterMember, error) {
+	log.Error("### len(producers) < arbitratorsCount", len(producers), arbitratorsCount)
 	if len(producers) < arbitratorsCount {
 		return nil, ErrInsufficientProducer
 	}
