@@ -23,6 +23,8 @@ import (
 
 type ProducerState byte
 
+var SMALL_CROSS_TRANSFER_RPEFIX = []byte("SMALL_CROSS_TRANSFER")
+
 type ProducerInfo struct {
 	Payload   *payload.ProducerInfo
 	RegHeight uint32
@@ -51,6 +53,38 @@ func NewChainStore(dataDir string, params *config.Params) (IChainStore, error) {
 	}
 
 	return s, nil
+}
+
+func (c *ChainStore) CleanSmallCrossTransferTx(txHash Uint256) error {
+	var key bytes.Buffer
+	key.Write(SMALL_CROSS_TRANSFER_RPEFIX)
+	key.Write(txHash.Bytes())
+	return c.levelDB.Delete(key.Bytes())
+}
+
+func (c *ChainStore) SaveSmallCrossTransferTx(tx *Transaction) error {
+	buf := new(bytes.Buffer)
+	tx.Serialize(buf)
+	var key bytes.Buffer
+	key.Write(SMALL_CROSS_TRANSFER_RPEFIX)
+	key.Write(tx.Hash().Bytes())
+	c.levelDB.Put(key.Bytes(), buf.Bytes())
+	return nil
+}
+
+func (c *ChainStore) GetSmallCrossTransferTx() ([]*Transaction, error) {
+	Iter := c.levelDB.NewIterator(SMALL_CROSS_TRANSFER_RPEFIX)
+	var txns []*Transaction
+	for Iter.Next() {
+		val := Iter.Value()
+		var txn Transaction
+		err := txn.Deserialize(bytes.NewReader(val))
+		if err != nil {
+			return nil, err
+		}
+		txns = append(txns, &txn)
+	}
+	return txns, nil
 }
 
 func (c *ChainStore) CloseLeveldb() {

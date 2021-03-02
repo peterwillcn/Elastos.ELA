@@ -237,6 +237,7 @@ var DefaultParams = Params{
 	RevertToPOWNoBlockTime:             12 * 3600, //TODO reset latter
 	StopConfirmBlockTime:               11 * 3600, //TODO reset latter
 	RevertToPOWStartHeight:             1000000,   //TODO reset latter
+	SmallCrossTransferThreshold:        100000000, //TODO reset latter
 }
 
 // TestNet returns the network parameters for the test network.
@@ -306,17 +307,18 @@ func (p *Params) TestNet() *Params {
 	copy.MaxNodePerHost = 10
 	copy.CheckVoteCRCountHeight = 546500
 	copy.MaxCRAssetsAddressUTXOCount = 800
-	copy.ChangeCommitteeNewCRHeight = 1000000   //TODO reset latter
-	copy.CustomIDProposalStartHeight = 1000000  //TODO reset latter
-	copy.IllegalPenalty = 5000                  //TODO reset latter
-	copy.NoCRCDPOSNodeHeight = 1000000          //TODO reset latter
-	copy.RandomCandidatePeriod = 36 * 10        //TODO reset latter
-	copy.MaxInactiveRoundsOfRandomNode = 36 * 8 //TODO reset latter
-	copy.DPOSNodeCrossChainHeight = 1000000     //TODO reset latter
-	copy.MaxReservedCustomIDListCount = 255     //TODO reset latter
-	copy.RevertToPOWNoBlockTime = 12 * 3600     //TODO reset latter
-	copy.StopConfirmBlockTime = 11 * 3600       //TODO reset latter
-	copy.RevertToPOWStartHeight = 1000000       //TODO reset latter
+	copy.ChangeCommitteeNewCRHeight = 1000000    //TODO reset latter
+	copy.CustomIDProposalStartHeight = 1000000   //TODO reset latter
+	copy.IllegalPenalty = 5000                   //TODO reset latter
+	copy.NoCRCDPOSNodeHeight = 1000000           //TODO reset latter
+	copy.RandomCandidatePeriod = 36 * 10         //TODO reset latter
+	copy.MaxInactiveRoundsOfRandomNode = 36 * 8  //TODO reset latter
+	copy.DPOSNodeCrossChainHeight = 1000000      //TODO reset latter
+	copy.MaxReservedCustomIDListCount = 255      //TODO reset latter
+	copy.RevertToPOWNoBlockTime = 12 * 3600      //TODO reset latter
+	copy.StopConfirmBlockTime = 11 * 3600        //TODO reset latter
+	copy.RevertToPOWStartHeight = 1000000        //TODO reset latter
+	copy.SmallCrossTransferThreshold = 100000000 //TODO reset latter
 
 	return &copy
 }
@@ -388,17 +390,18 @@ func (p *Params) RegNet() *Params {
 	copy.MaxNodePerHost = 10
 	copy.CheckVoteCRCountHeight = 435000
 	copy.MaxCRAssetsAddressUTXOCount = 1440
-	copy.ChangeCommitteeNewCRHeight = 1000000   //TODO reset latter
-	copy.CustomIDProposalStartHeight = 1000000  //TODO reset latter
-	copy.IllegalPenalty = 5000                  //TODO reset latter
-	copy.NoCRCDPOSNodeHeight = 1000000          //TODO reset latter
-	copy.RandomCandidatePeriod = 36 * 10        //TODO reset latter
-	copy.MaxInactiveRoundsOfRandomNode = 36 * 8 //TODO reset latter
-	copy.DPOSNodeCrossChainHeight = 1000000     //TODO reset latter
-	copy.MaxReservedCustomIDListCount = 255     //TODO reset latter
-	copy.RevertToPOWNoBlockTime = 12 * 3600     //TODO reset latter
-	copy.StopConfirmBlockTime = 11 * 3600       //TODO reset latter
-	copy.RevertToPOWStartHeight = 1000000       //TODO reset latter
+	copy.ChangeCommitteeNewCRHeight = 1000000    //TODO reset latter
+	copy.CustomIDProposalStartHeight = 1000000   //TODO reset latter
+	copy.IllegalPenalty = 5000                   //TODO reset latter
+	copy.NoCRCDPOSNodeHeight = 1000000           //TODO reset latter
+	copy.RandomCandidatePeriod = 36 * 10         //TODO reset latter
+	copy.MaxInactiveRoundsOfRandomNode = 36 * 8  //TODO reset latter
+	copy.DPOSNodeCrossChainHeight = 1000000      //TODO reset latter
+	copy.MaxReservedCustomIDListCount = 255      //TODO reset latter
+	copy.RevertToPOWNoBlockTime = 12 * 3600      //TODO reset latter
+	copy.StopConfirmBlockTime = 11 * 3600        //TODO reset latter
+	copy.RevertToPOWStartHeight = 1000000        //TODO reset latter
+	copy.SmallCrossTransferThreshold = 100000000 //TODO reset latter
 
 	return &copy
 }
@@ -703,6 +706,9 @@ type Params struct {
 
 	// RevertToPOWStartHeight defines the start height to allow to revert to POW mode.
 	RevertToPOWStartHeight uint32
+
+	// SMALLCrossTransferThreshold indicates the minimum amount consider as Small transfer
+	SmallCrossTransferThreshold common.Fixed64
 }
 
 // rewardPerBlock calculates the reward for each block by a specified time

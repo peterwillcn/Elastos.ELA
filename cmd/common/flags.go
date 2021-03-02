@@ -466,6 +466,11 @@ var (
 		Name:  "reverttopowstartheight",
 		Usage: "defines the start height to allow to revert to POW mode",
 	}
+
+	SmallCrossTransferThreshold = cli.StringFlag{
+		Name:  "smallcrosstransferthreshold",
+		Usage: "defines the minimum amount of transfer consider as small cross transfer",
+	}
 )
 
 // MoveRPCFlags finds the rpc argument and moves it to the front

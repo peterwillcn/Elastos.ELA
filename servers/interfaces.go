@@ -336,6 +336,16 @@ func SubmitSidechainIllegalData(param Params) map[string]interface{} {
 	return ResponsePack(Success, true)
 }
 
+func GetSmallCrossTransferTxs(params Params) map[string]interface{} {
+
+	txs, err := Store.GetSmallCrossTransferTx()
+	if err != nil {
+		return ResponsePack(InternalError, "internal error fail to get small crosschain transfer txs")
+	}
+
+	return ResponsePack(Success, txs)
+}
+
 func GetCrossChainPeersInfo(params Params) map[string]interface{} {
 	if Arbiter == nil {
 		return ResponsePack(InternalError, "arbiter disabled")
@@ -2958,6 +2968,12 @@ func VerifyAndSendTx(tx *Transaction) error {
 	iv := msg.NewInvVect(msg.InvTypeTx, &txHash)
 	Server.RelayInventory(iv, tx)
 
+	if tx.IsTransferCrossChainAssetTx() && tx.IsSmallTransfer(ChainParams.SmallCrossTransferThreshold) {
+		err := Store.SaveSmallCrossTransferTx(tx)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

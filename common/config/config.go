@@ -80,6 +80,7 @@ type Configuration struct {
 	MaxNodePerHost               uint32            `json:"MaxNodePerHost"`
 	CustomIDProposalStartHeight  uint32            `json:"CustomIDProposalStartHeight"`
 	MaxReservedCustomIDListCount uint32            `json:"MaxReservedCustomIDListCount"`
+	SmallCrossTransferThreshold  common.Fixed64    `json:"SmallCrossTransferThreshold"`
 }
 
 // DPoSConfiguration defines the DPoS consensus parameters.

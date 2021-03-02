@@ -987,6 +987,12 @@ func NewSettings() *Settings {
 		ConfigPath:   "DPoSConfiguration.DPOSNodeCrossChainHeight",
 		ParamName:    "DPOSNodeCrossChainHeight"})
 
+	result.Add(&settingItem{
+		Flag:         cmdcom.SmallCrossTransferThreshold,
+		DefaultValue: common.Fixed64(0),
+		ConfigPath:   "SmallCrossTransferThreshold",
+		ParamName:    "SmallCrossTransferThreshold"})
+
 	return result
 }
 
