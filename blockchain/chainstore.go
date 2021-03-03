@@ -7,6 +7,7 @@ package blockchain
 
 import (
 	"bytes"
+	"encoding/hex"
 	"errors"
 	"path/filepath"
 	"sync"
@@ -72,17 +73,12 @@ func (c *ChainStore) SaveSmallCrossTransferTx(tx *Transaction) error {
 	return nil
 }
 
-func (c *ChainStore) GetSmallCrossTransferTx() ([]*Transaction, error) {
+func (c *ChainStore) GetSmallCrossTransferTx() ([]string, error) {
 	Iter := c.levelDB.NewIterator(SMALL_CROSS_TRANSFER_RPEFIX)
-	var txns []*Transaction
+	txns := make([]string, 0)
 	for Iter.Next() {
 		val := Iter.Value()
-		var txn Transaction
-		err := txn.Deserialize(bytes.NewReader(val))
-		if err != nil {
-			return nil, err
-		}
-		txns = append(txns, &txn)
+		txns = append(txns, hex.EncodeToString(val))
 	}
 	return txns, nil
 }

@@ -663,9 +663,5 @@ func GetPayload(txType TxType) (Payload, error) {
 }
 
 func (tx *Transaction) IsSmallTransfer(min common.Fixed64) bool {
-	var total common.Fixed64
-	for _, o := range tx.Outputs {
-		total += o.Value
-	}
-	return total <= min
+	return tx.Outputs[0].Value <= min
 }

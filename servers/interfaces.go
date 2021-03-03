@@ -337,13 +337,19 @@ func SubmitSidechainIllegalData(param Params) map[string]interface{} {
 }
 
 func GetSmallCrossTransferTxs(params Params) map[string]interface{} {
-
+	type SmallCrossTransferTx struct {
+		Txs []string `json:"txs"`
+	}
 	txs, err := Store.GetSmallCrossTransferTx()
 	if err != nil {
 		return ResponsePack(InternalError, "internal error fail to get small crosschain transfer txs")
 	}
 
-	return ResponsePack(Success, txs)
+	result := SmallCrossTransferTx{
+		Txs: txs,
+	}
+
+	return ResponsePack(Success, result)
 }
 
 func GetCrossChainPeersInfo(params Params) map[string]interface{} {
@@ -2968,12 +2974,6 @@ func VerifyAndSendTx(tx *Transaction) error {
 	iv := msg.NewInvVect(msg.InvTypeTx, &txHash)
 	Server.RelayInventory(iv, tx)
 
-	if tx.IsTransferCrossChainAssetTx() && tx.IsSmallTransfer(ChainParams.SmallCrossTransferThreshold) {
-		err := Store.SaveSmallCrossTransferTx(tx)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 

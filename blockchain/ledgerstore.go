@@ -40,7 +40,7 @@ type IChainStore interface {
 	GetProposalDraftDataByDraftHash(draftHash *Uint256) ([]byte, error)
 
 	SaveSmallCrossTransferTx(tx *Transaction) error
-	GetSmallCrossTransferTx() ([]*Transaction, error)
+	GetSmallCrossTransferTx() ([]string, error)
 	CleanSmallCrossTransferTx(txHash Uint256) error
 
 	Close()
