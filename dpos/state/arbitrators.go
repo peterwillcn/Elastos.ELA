@@ -472,7 +472,6 @@ func (a *arbitrators) normalChange(height uint32) error {
 }
 
 func (a *arbitrators) notifyNextTurnDPOSInfoTx(blockHeight, versionHeight uint32) {
-
 	nextTurnDPOSInfoTx := a.createNextTurnDPOSInfoTransaction(blockHeight)
 	go events.Notify(events.ETAppendTxToTxPool, nextTurnDPOSInfoTx)
 	return
